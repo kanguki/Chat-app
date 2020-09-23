@@ -4,23 +4,24 @@ const roomName = document.getElementById('room-name')
 const usersList = document.getElementById('users')
 const chatMain = document.querySelector('.chat-main')
 const sideBar = document.querySelector('.chat-sidebar')
-const chatMessagesArea = document.querySelector('.chat-messages')
 const menuIcon = document.querySelector('.menuIcon')
 const inputMessage = document.getElementById('msg')
+const typeArea = document.getElementById('typing')
 
 
 const socket = io()
 let mySocket, myMessage, serverResponse
 
+
 const { username, room } = Qs.parse(location.search, { ignoreQueryPrefix: true })
 
 outputRoom(room)
+
 
 socket.emit('joinRoom', { username, room })
 
 
 socket.on('joinRoom', ({user,room,socketId}) => {
-    console.log({user,room,socketId})
     mySocket = socketId
 
     socket.on('roomUsers', ({ users }) => {
@@ -28,22 +29,39 @@ socket.on('joinRoom', ({user,room,socketId}) => {
     })
 
     socket.on('message', ({socketId, sender, msg, time}) => {
-        
+  
             if (!socketId) serverResponse = true
             else serverResponse = false
 
             myMessage = socketId === mySocket
             outputMessage(msg, sender, time)
-            chatMessages.scrollTop = chatMessages.scrollHeight   
-            console.log(myMessage, mySocket, serverResponse)
+            chatMessages.scrollTop = chatMessages.scrollHeight
+
     })
+
 })
+
+// socket.on('typing', ({ msg }) => {
+//     typeArea.style.display = "block"
+
+//     $("#typing").html(msg).fadeIn(1000)
+//     setTimeout(() => {
+//             typeArea.style.display = "none"
+//     },2000)
+    
+// })
+
+// msg.addEventListener('keydown', () => {
+//     socket.emit('typing',{userName: username})
+// })
+
+
 let click = false
 menuIcon.addEventListener('click', () => {
     click = !click
     chatMain.classList.toggle('mobile')
     sideBar.classList.toggle('mobile')
-    chatMessagesArea.classList.toggle('mobile')
+    chatMessages.classList.toggle('mobile')
     if (click) {
         menuIcon.children[0].style.display = "none"
         menuIcon.children[1].style.display = "block"
@@ -54,7 +72,6 @@ menuIcon.addEventListener('click', () => {
 })
 
 
-
 chatForm.addEventListener('submit', e => {
     e.preventDefault()
     const msg = e.target.elements.msg.value  
@@ -63,29 +80,10 @@ chatForm.addEventListener('submit', e => {
     socket.emit('chatMessage',msg)
 })
 
-
-
-
-
-
-
-
-msg.addEventListener('keydown', () => {
-    console.log('hihi')
-})
-
-
-
-
-
-
-
-
 function outputRoom(room) {
     roomName.innerHTML = room
 }
 function outputUsers(users) {
-    console.log(users)
     usersList.innerHTML = ''
     users.forEach(user => {
         usersList.innerHTML +=`<li>${user.username}</li>`
@@ -105,6 +103,8 @@ function outputMessage(msg,sender,time) {
         div.className = 'message admin-message'
     }
     div.innerHTML = `<p class="meta">${messageSender} <span>${time}</span></p><p>${msg}</p>`
-    
+    div.style.order = "1"
     chatMessages.appendChild(div)
+
 }
+

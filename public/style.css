@@ -110,8 +110,8 @@ input{
 	padding: 30px;
 	height: 400px;
 	overflow: auto;
+	
 }
-
 
 .chat-messages .message {
 	padding: 10px;
@@ -120,6 +120,7 @@ input{
 	overflow-wrap: break-word;
 
 }
+
 
 .chat-messages .message .meta {
 	font-size: 15px;

@@ -1,5 +1,7 @@
 const express = require('express')
 const path = require('path')
+var serveStatic = require('serve-static')
+const cors = require('cors')
 
 const app = express()
 const http = require('http').createServer(app)
@@ -7,8 +9,20 @@ const io = require('socket.io')(http)
 const formatMessage = require('./utils/message')
 const {userJoin, getRoomUsers, userLeave} = require('./utils/users')
 
+
+//app.use(serveStatic(path.join(__dirname, 'public')));
+app.use(cors())
+app.use(express.static('public'))
+
 // app.use(express.json())
-app.use(express.static(path.join(__dirname,'public')))
+// app.use(serveStatic(path.join(__filename, 'index.html')))
+// app.use(serveStatic('public/ftp', { 'index': ['index.html', 'index.htm'] }))
+// app.get('/', function(req, res) {
+//     res.sendFile(path.join(__dirname, 'public'));
+//   });
+
+
+http.listen(process.env.PORT || 9000)
 
 const botName = 'Admin'
 io.on('connection', socket => {
@@ -42,10 +56,4 @@ io.on('connection', socket => {
         }
     })
  
-})
-
-
-const PORT = 9000 || process.env.PORT
-http.listen(PORT, () => {
-    console.log(`Server running on port ${PORT}`)
 })
