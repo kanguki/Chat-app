@@ -1,9 +1,9 @@
-const moment = require('moment')
 
 function formatMessage(sender, msg) {
+    let x = new Date()
     return {
         sender, msg, 
-        time: moment().format('h:mm a')
+        time: x.toLocaleTimeString()
     }
 }
 
